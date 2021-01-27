@@ -1,41 +1,46 @@
 import Head from "next/head";
-import { auth } from "firebase";
-import { useAuth } from "../lib/auth";
-import styles from "../styles/Home.module.css";
+import { useAuth } from "@/lib/auth";
+import { Button, Flex } from "@chakra-ui/react";
+import { FastFeedbackIcon } from "public/Icon";
 
 const Home = () => {
   const auth = useAuth();
 
   return (
-    <div className={styles.container}>
+    <Flex
+      as="main"
+      direction="column"
+      align="center"
+      justify="center"
+      height="100vh"
+    >
       <Head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+          if (document.cookie && document.cookie.includes('feedback-hub-auth')) {
+            window.location.href = "/dashboard"
+          }
+        `,
+          }}
+        />
         <title>Feedback Hub</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>Feedback Hub</h1>
-        <p className={styles.description}>
-          Current user: {auth.user ? auth.user.email : "None"}
-        </p>
-        {auth.user ? (
-          <button onClick={(e) => auth.signout()}>Sign Out</button>
-        ) : (
-          <button onClick={(e) => auth.signinWithGithub()}>Sign In</button>
-        )}
-      </main>
+      <FastFeedbackIcon boxSize="64px" />
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+      {auth.user ? (
+        <Button as="a" fontWeight="medium" href="/dashboard">
+          View Dashboard
+        </Button>
+      ) : (
+        <Button mt={4} size="sm" onClick={(e) => auth.signinWithGithub()}>
+          Sign In
+        </Button>
+      )}
+
+      <footer></footer>
+    </Flex>
   );
 };
 
